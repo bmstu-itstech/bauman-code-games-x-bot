@@ -1,0 +1,37 @@
+name: Bauman Code Games X bot
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          DATABASE_URI: ${{ secrets.DATABASE_URI }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          LOG_LEVEL: ${{ vars.LOG_LEVEL }}
+          PD_POLICY_URL: ${{ vars.PD_POLICY_URL }}
+          PGSSLROOTCERT: ${{ vars.PGSSLROOTCERT }}
+        with:
+          host: ${{ vars.SSH_HOST }}
+          port: ${{ vars.SSH_PORT }}
+          username: ${{ vars.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script_stop: true
+          envs: DATABASE_URI, TELEGRAM_URI, LOG_LEVEL, PD_POLICY_URL, PGSSLROOTCERT
+          script: |
+            cd ${{ vars.PROJECT_DIR }}
+            git stash
+            git checkout main
+            git pull origin main
+            docker compose -f docker-compose.ci.yaml run --rm migrate
+            docker compose -f docker-compose.ci.yaml up --build -d bot
