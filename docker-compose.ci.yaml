@@ -6,9 +6,12 @@ services:
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
       LOG_LEVEL: ${LOG_LEVEL:-debug}
       PD_POLICY_URL: $PD_POLICY_URL
+      PGSSLROOTCERT: /certs/root.crt
     depends_on:
       migrate:
         condition: service_completed_successfully
+    volumes:
+      - $PGSSLROOTCERT:/certs:ro
 
   migrate:
     image: migrate/migrate
