@@ -4,7 +4,10 @@ import re
 import datetime
 
 _FULL_NAME_RE = re.compile(r"^[а-яА-ЯёЁ-]+(\s+[а-яА-ЯёЁ-]+)+$")
-_GROUP_RE = re.compile(r"^[А-ЯЁ]{1,4}[а-яё]?-\d{2}[А-ЯЁ]?-\d{2}$")
+_GROUP_RE = re.compile(
+    r"^((((ФМОП-)?(ИУ|ИБМ|МТ|СМ|БМТ|РЛ|Э|РК|ФН|Л|СГН|ВУЦ|УЦ|ИСОТ|РКТ|АК|ПС|РТ|ЛТ|К|ЮР|ОЭ|ТА|ТБД|ТИ|ТД|ТИП|ТКС|ТМО|ТМР|ТР|ТСА|ТСР|ТСС|ТУ|ТУС|ТЭ)"
+    r"[1-9]\d?)|(ЮР(\.ДК)?))(К)?[ИЦ]?-(((1[0-2])|(\d))((\d)|(.\d\d+))([АМБ]?(В)?)))$"
+)
 _TEAM_ID_RE = re.compile(r"^[a-z0-9]{8}$")
 
 
@@ -28,8 +31,8 @@ def validate_birthdate(value: str) -> datetime.date | str:
 
 
 def validate_group(value: str) -> str | None:
-    if not _GROUP_RE.match(value.strip()):
-        return "Неверный формат группы. Пример: ИУ7-63Б-22."
+    if not _GROUP_RE.match(value.strip().upper()):
+        return "Неверный формат группы. Пример: ИУ7-63Б."
     return None
 
 
