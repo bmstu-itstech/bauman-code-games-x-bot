@@ -27,7 +27,7 @@ jobs:
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script_stop: true
-          envs: DATABASE_URI, TELEGRAM_URI, LOG_LEVEL, PD_POLICY_URL, PGSSLROOTCERT
+          envs: DATABASE_URI, TELEGRAM_TOKEN, LOG_LEVEL, PD_POLICY_URL, PGSSLROOTCERT
           script: |
             cd ${{ vars.PROJECT_DIR }}
             git stash
