@@ -39,6 +39,11 @@ async def start_registration(message: Message, state: FSMContext) -> None:
 @router.callback_query(RegFSM.consent, F.data == "consent_agree")
 async def on_consent(cb: CallbackQuery, state: FSMContext) -> None:
     await cb.answer()
+    await cb.message.edit_text(  # type: ignore[union-attr]
+        render("consent_accepted", pd_policy_url=settings.pd_policy_url),
+        parse_mode="HTML",
+        disable_web_page_preview=True,
+    )
     await state.set_state(RegFSM.full_name)
     await cb.message.answer(render("ask_full_name"), parse_mode="HTML")  # type: ignore[union-attr]
 
