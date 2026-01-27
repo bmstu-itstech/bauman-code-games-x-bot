@@ -12,6 +12,13 @@ services:
 
   migrate:
     image: migrate/migrate
-    command: ["-path", "/migrations", "-database", "$DATABASE_URI", "up"]
+    command: [
+      "-path", "/migrations",
+      "-database", "$DATABASE_URI",
+      "up"
+    ]
+    environment:
+      PGSSLROOTCERT: /certs/root.crt
     volumes:
-      - ./migrations:/migrations
+      - ./migrations:/migrations:ro
+      - $PGSSLROOTCERT:/certs:ro
