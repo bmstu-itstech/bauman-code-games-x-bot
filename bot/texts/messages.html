@@ -1,0 +1,91 @@
+{% block consent %}
+Для продолжения необходимо дать согласие на обработку персональных данных.
+
+<a href="{{ pd_policy_url }}">Положение об обработке персональных данных</a>
+{% endblock %}
+
+{% block ask_full_name %}
+Введите ваше ФИО (например, Иванов Иван Иванович):
+{% endblock %}
+
+{% block ask_birthdate %}
+Введите дату рождения в формате ДД.ММ.ГГГГ:
+{% endblock %}
+
+{% block ask_affiliation %}
+Выберите вашу принадлежность:
+{% endblock %}
+
+{% block ask_bmstu_group %}
+Введите номер группы (например, ИУ7-63Б-22):
+{% endblock %}
+
+{% block ask_university %}
+Введите название вашего вуза:
+{% endblock %}
+
+{% block registration_complete %}
+Регистрация завершена! Добро пожаловать, <b>{{ full_name }}</b>.
+{% endblock %}
+
+{% block main_menu %}
+Главное меню:
+{% endblock %}
+
+{% block create_team_name %}
+Введите название команды (до 31 символа):
+{% endblock %}
+
+{% block team_created %}
+Команда <b>{{ team_name }}</b> создана!
+
+ID команды: <code>{{ team_id }}</code>
+Пригласительная ссылка: https://t.me/{{ bot_username }}?start={{ team_id }}
+{% endblock %}
+
+{% block join_team_id %}
+Введите ID команды (8 символов):
+{% endblock %}
+
+{% block team_joined %}
+Вы присоединились к команде <b>{{ team_name }}</b>!
+{% endblock %}
+
+{% block team_info %}
+<b>{{ team_name }}</b>
+
+Состав:
+{% for m in members %}
+- {{ m.full_name }}{% if m.username %} (@{{ m.username }}){% endif %}{% if m.id == captain_id %} ⭐{% endif %}
+
+{% endfor %}
+Статус: {% if is_ready %}✅ Готова{% else %}⏳ Не готова ({{ members|length }}/3){% endif %}
+{% endblock %}
+
+{% block team_left %}
+Вы покинули команду.
+{% endblock %}
+
+{% block error_team_full %}
+Команда уже заполнена (3/3).
+{% endblock %}
+
+{% block error_team_not_found %}
+Команда с таким ID не найдена.
+{% endblock %}
+
+{% block error_team_name_taken %}
+Команда с таким названием уже существует. Попробуйте другое.
+{% endblock %}
+
+{% block error_already_in_team %}
+Вы уже состоите в команде. Сначала выйдите из текущей команды.
+{% endblock %}
+
+{% block error_not_in_team %}
+Вы не состоите ни в одной команде.
+{% endblock %}
+
+{% block deep_link_after_reg %}
+Вы автоматически присоединились к команде <b>{{ team_name }}</b>!
+{% endblock %}

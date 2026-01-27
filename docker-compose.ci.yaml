@@ -1,0 +1,17 @@
+services:
+  bot:
+    build: .
+    environment:
+      DATABASE_URI: $DATABASE_URI
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+      PD_POLICY_URL: $PD_POLICY_URL
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  migrate:
+    image: migrate/migrate
+    command: ["-path", "/migrations", "-database", "$DATABASE_URI", "up"]
+    volumes:
+      - ./migrations:/migrations
