@@ -25,13 +25,14 @@ async def create_participant(
     affiliation_type: str,
     bmstu_group: str | None = None,
     university: str | None = None,
+    ref_code: str | None = None,
 ) -> None:
     await conn.execute(
         """
-        INSERT INTO participants (id, username, full_name, birthdate, affiliation_type, bmstu_group, university)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO participants (id, username, full_name, birthdate, affiliation_type, bmstu_group, university, ref_code)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         """,
-        tg_id, username, full_name, birthdate, affiliation_type, bmstu_group, university,
+        tg_id, username, full_name, birthdate, affiliation_type, bmstu_group, university, ref_code,
     )
 
 
@@ -44,5 +45,6 @@ def _row_to_participant(row: asyncpg.Record) -> Participant:
         affiliation_type=row["affiliation_type"],
         bmstu_group=row["bmstu_group"],
         university=row["university"],
+        ref_code=row["ref_code"],
         created_at=row["created_at"],
     )

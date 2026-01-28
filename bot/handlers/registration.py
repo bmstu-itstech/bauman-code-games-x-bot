@@ -124,6 +124,7 @@ async def _finish_registration(
         affiliation_type=data["affiliation_type"],
         bmstu_group=data.get("bmstu_group"),
         university=data.get("university"),
+        ref_code=data.get("pending_ref_code"),
     )
 
     await message.answer(

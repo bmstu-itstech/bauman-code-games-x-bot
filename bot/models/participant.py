@@ -13,4 +13,5 @@ class Participant:
     affiliation_type: str  # "bmstu" | "other"
     bmstu_group: str | None = None
     university: str | None = None
+    ref_code: str | None = None
     created_at: datetime.datetime | None = None

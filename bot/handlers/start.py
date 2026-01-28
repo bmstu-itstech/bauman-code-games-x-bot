@@ -8,6 +8,7 @@ import asyncpg
 
 from bot.db import participants as db_part
 from bot.db import teams as db_teams
+from bot.db import ref_sources as db_ref
 from bot.handlers.menu import show_menu
 from bot.handlers.registration import start_registration
 from bot.templates import render
@@ -20,18 +21,24 @@ router = Router()
 async def cmd_start_deep(
     message: Message, command: CommandObject, state: FSMContext, conn: asyncpg.Connection
 ) -> None:
-    team_id = (command.args or "").strip().lower()
+    arg = (command.args or "").strip().lower()
     participant = await db_part.get_participant(conn, message.from_user.id)  # type: ignore[union-attr]
 
+    is_ref = await db_ref.ref_source_exists(conn, arg)
+
     if participant is None:
-        if validate_team_id(team_id) is None:
-            await state.update_data(pending_team_id=team_id)
+        if is_ref:
+            await state.update_data(pending_ref_code=arg)
+        elif validate_team_id(arg) is None:
+            await state.update_data(pending_team_id=arg)
         await start_registration(message, state)
         return
 
-    if validate_team_id(team_id) is not None:
+    if is_ref or validate_team_id(arg) is not None:
         await show_menu(message, conn)
         return
+
+    team_id = arg
 
     existing = await db_teams.get_team_by_participant(conn, participant.id)
     if existing:
