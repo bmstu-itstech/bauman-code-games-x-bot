@@ -10,7 +10,7 @@ from bot.models.team import Team
 
 
 def generate_team_id() -> str:
-    return secrets.token_hex(4)
+    return secrets.token_hex(3)
 
 
 async def create_team(
@@ -19,6 +19,10 @@ async def create_team(
     captain_id: int,
 ) -> Team:
     team_id = generate_team_id()
+    await conn.execute(
+        "INSERT INTO ref_sources (code, description) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+        team_id, f"Команда: {name}",
+    )
     await conn.execute(
         "INSERT INTO teams (id, name, captain_id) VALUES ($1, $2, $3)",
         team_id, name, captain_id,

@@ -14,6 +14,10 @@ from bot.handlers.registration import start_registration
 from bot.templates import render
 from bot.validators import validate_team_id
 
+import re
+
+_REF_CODE_RE = re.compile(r"^[a-z0-9]{8}$")
+
 router = Router()
 
 
@@ -65,17 +69,19 @@ async def cmd_start_deep(
 async def _parse_deep_link(
     conn: asyncpg.Connection, arg: str
 ) -> tuple[str | None, str | None]:
+    """Parse deep link arg into (team_id, ref_code).
 
-    if "_" in arg:
-        head, tail = arg.split("_", 1)
-        if validate_team_id(head) is None and await db_ref.ref_source_exists(conn, tail):
-            return head, tail
-
-    if await db_ref.ref_source_exists(conn, arg):
-        return None, arg
-
+    Distinguished by length:
+      - 6 chars [a-z0-9] → team invite code (also saved as ref_code)
+      - 8 chars [a-z0-9] → ref code from posts
+    """
     if validate_team_id(arg) is None:
-        return arg, None
+        # 6-char code = team invite; team_id is itself a ref source
+        return arg, arg
+
+    if _REF_CODE_RE.match(arg) and await db_ref.ref_source_exists(conn, arg):
+        # 8-char code = ref from a post
+        return None, arg
 
     return None, None
 

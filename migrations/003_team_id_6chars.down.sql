@@ -1,0 +1,5 @@
+DELETE FROM team_members;
+DELETE FROM teams;
+
+ALTER TABLE team_members ALTER COLUMN team_id TYPE CHAR(8);
+ALTER TABLE teams ALTER COLUMN id TYPE CHAR(8);

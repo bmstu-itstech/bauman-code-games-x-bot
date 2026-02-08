@@ -8,7 +8,7 @@ _GROUP_RE = re.compile(
     r"^((((ФМОП-)?(ИУ|ИБМ|МТ|СМ|БМТ|РЛ|Э|РК|ФН|Л|СГН|ВУЦ|УЦ|ИСОТ|РКТ|АК|ПС|РТ|ЛТ|К|ЮР|ОЭ|ТА|ТБД|ТИ|ТД|ТИП|ТКС|ТМО|ТМР|ТР|ТСА|ТСР|ТСС|ТУ|ТУС|ТЭ)"
     r"[1-9]\d?)|(ЮР(\.ДК)?))(К)?[ИЦ]?-(((1[0-2])|(\d))((\d)|(.\d\d+))([АМБ]?(В)?)))$"
 )
-_TEAM_ID_RE = re.compile(r"^[a-z0-9]{8}$")
+_TEAM_ID_RE = re.compile(r"^[a-z0-9]{6}$")
 
 
 def validate_full_name(value: str) -> str | None:
@@ -38,7 +38,7 @@ def validate_group(value: str) -> str | None:
 
 def validate_team_id(value: str) -> str | None:
     if not _TEAM_ID_RE.match(value.strip().lower()):
-        return "ID команды должен содержать 8 символов (a-z, 0-9)."
+        return "ID команды должен содержать 6 символов (a-z, 0-9)."
     return None
 
 
