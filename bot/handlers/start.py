@@ -24,21 +24,19 @@ async def cmd_start_deep(
     arg = (command.args or "").strip().lower()
     participant = await db_part.get_participant(conn, message.from_user.id)  # type: ignore[union-attr]
 
-    is_ref = await db_ref.ref_source_exists(conn, arg)
+    team_id, ref_code = await _parse_deep_link(conn, arg)
 
     if participant is None:
-        if is_ref:
-            await state.update_data(pending_ref_code=arg)
-        elif validate_team_id(arg) is None:
-            await state.update_data(pending_team_id=arg)
+        if ref_code:
+            await state.update_data(pending_ref_code=ref_code)
+        if team_id:
+            await state.update_data(pending_team_id=team_id)
         await start_registration(message, state)
         return
 
-    if is_ref or validate_team_id(arg) is not None:
+    if team_id is None:
         await show_menu(message, conn)
         return
-
-    team_id = arg
 
     existing = await db_teams.get_team_by_participant(conn, participant.id)
     if existing:
@@ -63,6 +61,23 @@ async def cmd_start_deep(
     )
     await show_menu(message, conn)
 
+
+async def _parse_deep_link(
+    conn: asyncpg.Connection, arg: str
+) -> tuple[str | None, str | None]:
+
+    if "_" in arg:
+        head, tail = arg.split("_", 1)
+        if validate_team_id(head) is None and await db_ref.ref_source_exists(conn, tail):
+            return head, tail
+
+    if await db_ref.ref_source_exists(conn, arg):
+        return None, arg
+
+    if validate_team_id(arg) is None:
+        return arg, None
+
+    return None, None
 
 @router.message(CommandStart())
 async def cmd_start(message: Message, state: FSMContext, conn: asyncpg.Connection) -> None:
