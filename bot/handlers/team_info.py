@@ -18,10 +18,13 @@ async def on_info(cb: CallbackQuery, conn: asyncpg.Connection) -> None:
     if team is None:
         await cb.message.answer(render("error_not_in_team"), parse_mode="HTML")  # type: ignore[union-attr]
         return
+    bot_me = await cb.message.bot.me()  # type: ignore[union-attr]
     await cb.message.answer(  # type: ignore[union-attr]
         render(
             "team_info",
             team_name=team.name,
+            team_id=team.id,
+            bot_username=bot_me.username,
             members=team.members,
             captain_id=team.captain_id,
             is_ready=team.is_ready,
