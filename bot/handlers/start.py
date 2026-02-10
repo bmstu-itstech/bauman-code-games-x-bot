@@ -79,9 +79,10 @@ async def _parse_deep_link(
         # 6-char code = team invite; team_id is itself a ref source
         return arg, arg
 
-    if _REF_CODE_RE.match(arg) and await db_ref.ref_source_exists(conn, arg):
-        # 8-char code = ref from a post
-        return None, arg
+    if _REF_CODE_RE.match(arg):
+        actual_code = await db_ref.get_ref_code(conn, arg)
+        if actual_code:
+            return None, actual_code
 
     return None, None
 

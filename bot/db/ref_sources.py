@@ -3,8 +3,7 @@ from __future__ import annotations
 import asyncpg
 
 
-async def ref_source_exists(conn: asyncpg.Connection, code: str) -> bool:
-    row = await conn.fetchval(
-        "SELECT 1 FROM ref_sources WHERE code = $1", code
+async def get_ref_code(conn: asyncpg.Connection, code: str) -> str | None:
+    return await conn.fetchval(
+        "SELECT code FROM ref_sources WHERE LOWER(code) = LOWER($1)", code
     )
-    return row is not None
