@@ -26,13 +26,23 @@ async def create_participant(
     bmstu_group: str | None = None,
     university: str | None = None,
     ref_code: str | None = None,
+    foncode_id: str | None = None,
 ) -> None:
     await conn.execute(
         """
-        INSERT INTO participants (id, username, full_name, birthdate, affiliation_type, bmstu_group, university, ref_code)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        INSERT INTO participants (id, username, full_name, birthdate, affiliation_type, bmstu_group, university, ref_code, foncode_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         """,
-        tg_id, username, full_name, birthdate, affiliation_type, bmstu_group, university, ref_code,
+        tg_id, username, full_name, birthdate, affiliation_type, bmstu_group, university, ref_code, foncode_id,
+    )
+
+
+async def set_foncode_id(
+    conn: asyncpg.Connection, tg_id: int, foncode_id: str
+) -> None:
+    await conn.execute(
+        "UPDATE participants SET foncode_id = $1 WHERE id = $2",
+        foncode_id, tg_id,
     )
 
 
@@ -46,5 +56,6 @@ def _row_to_participant(row: asyncpg.Record) -> Participant:
         bmstu_group=row["bmstu_group"],
         university=row["university"],
         ref_code=row["ref_code"],
+        foncode_id=row["foncode_id"],
         created_at=row["created_at"],
     )

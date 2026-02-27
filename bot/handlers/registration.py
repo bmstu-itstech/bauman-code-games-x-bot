@@ -9,7 +9,7 @@ import asyncpg
 from bot.config import settings
 from bot.keyboards import consent_kb, affiliation_kb
 from bot.templates import render
-from bot.validators import validate_full_name, validate_birthdate, validate_group
+from bot.validators import validate_full_name, validate_birthdate, validate_group, validate_foncode_id
 from bot.db import participants as db_part
 from bot.db import teams as db_teams
 from bot.handlers.menu import show_menu
@@ -24,6 +24,7 @@ class RegFSM(StatesGroup):
     affiliation_type = State()
     bmstu_group = State()
     other_university = State()
+    foncode_id = State()
 
 
 async def start_registration(message: Message, state: FSMContext) -> None:
@@ -90,22 +91,35 @@ async def on_other(cb: CallbackQuery, state: FSMContext) -> None:
 
 
 @router.message(RegFSM.bmstu_group)
-async def on_group(message: Message, state: FSMContext, conn: asyncpg.Connection) -> None:
+async def on_group(message: Message, state: FSMContext) -> None:
     err = validate_group(message.text or "")
     if err:
         await message.answer(err)
         return
     await state.update_data(bmstu_group=(message.text or "").strip())
-    await _finish_registration(message, state, conn)
+    await state.set_state(RegFSM.foncode_id)
+    await message.answer(render("ask_foncode_id"), parse_mode="HTML")
 
 
 @router.message(RegFSM.other_university)
-async def on_university(message: Message, state: FSMContext, conn: asyncpg.Connection) -> None:
+async def on_university(message: Message, state: FSMContext) -> None:
     text = (message.text or "").strip()
     if not text:
         await message.answer("Название вуза не может быть пустым.")
         return
     await state.update_data(university=text)
+    await state.set_state(RegFSM.foncode_id)
+    await message.answer(render("ask_foncode_id"), parse_mode="HTML")
+
+
+@router.message(RegFSM.foncode_id)
+async def on_foncode_id(message: Message, state: FSMContext, conn: asyncpg.Connection) -> None:
+    raw = (message.text or "").strip()
+    err = validate_foncode_id(raw)
+    if err:
+        await message.answer(err)
+        return
+    await state.update_data(foncode_id=raw)
     await _finish_registration(message, state, conn)
 
 
@@ -125,6 +139,7 @@ async def _finish_registration(
         bmstu_group=data.get("bmstu_group"),
         university=data.get("university"),
         ref_code=data.get("pending_ref_code"),
+        foncode_id=data.get("foncode_id"),
     )
 
     await message.answer(

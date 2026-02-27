@@ -14,4 +14,5 @@ class Participant:
     bmstu_group: str | None = None
     university: str | None = None
     ref_code: str | None = None
+    foncode_id: str | None = None
     created_at: datetime.datetime | None = None

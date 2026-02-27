@@ -19,8 +19,9 @@ def register_valid_states() -> None:
     from bot.handlers.registration import RegFSM
     from bot.handlers.team_create import CreateTeamFSM
     from bot.handlers.team_join import JoinTeamFSM
+    from bot.handlers.foncode import FoncodeFSM
 
-    for group in (RegFSM, CreateTeamFSM, JoinTeamFSM):
+    for group in (RegFSM, CreateTeamFSM, JoinTeamFSM, FoncodeFSM):
         for state in group.__all_states__:
             _VALID_STATES.add(state.state)
 

@@ -155,6 +155,29 @@ ID команды: <code>{{ team_id }}</code>
 {% endblock %}
 
 
+{% block ask_foncode_id %}
+<b>🔢 Введите ваш Foncode ID</b>
+
+Формат: 4 цифры (например, <code>1234</code>)
+{% endblock %}
+
+
+{% block foncode_confirm %}
+<b>🔢 Подтвердите Foncode ID</b>
+
+Вы ввели: <code>{{ foncode_id }}</code>
+
+Убедитесь, что ID верный — изменить его будет нельзя.
+{% endblock %}
+
+
+{% block foncode_saved %}
+✅ <b>Foncode ID сохранён</b>
+
+Ваш Foncode ID: <code>{{ foncode_id }}</code>
+{% endblock %}
+
+
 {% block deep_link_after_reg %}
 🔗 <b>Автоприсоединение</b>
 

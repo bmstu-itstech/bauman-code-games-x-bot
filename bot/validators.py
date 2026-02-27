@@ -9,6 +9,7 @@ _GROUP_RE = re.compile(
     r"(К)?[1-9]\d?)|(ЮР(\.ДК)?))(К)?[ИЦ]?-(((1[0-2])|(\d))((\d)|(.\d\d+))([АМБ]?(В)?)))$"
 )
 _TEAM_ID_RE = re.compile(r"^[a-z0-9]{6}$")
+_FONCODE_ID_RE = re.compile(r"^\d{4}$")
 
 
 def validate_full_name(value: str) -> str | None:
@@ -48,4 +49,10 @@ def validate_team_name(value: str) -> str | None:
         return "Название команды не может быть пустым."
     if len(name) > 31:
         return "Название команды не должно превышать 31 символ."
+    return None
+
+
+def validate_foncode_id(value: str) -> str | None:
+    if not _FONCODE_ID_RE.match(value.strip()):
+        return "Foncode ID должен содержать ровно 4 цифры."
     return None
