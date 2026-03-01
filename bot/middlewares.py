@@ -16,13 +16,7 @@ _VALID_STATES: set[str | None] = {None}
 
 
 def register_valid_states() -> None:
-    from bot.handlers.team_create import CreateTeamFSM
-    from bot.handlers.team_join import JoinTeamFSM
-    from bot.handlers.foncode import FoncodeFSM
-
-    for group in (CreateTeamFSM, JoinTeamFSM, FoncodeFSM):
-        for state in group.__all_states__:
-            _VALID_STATES.add(state.state)
+    pass
 
 
 class DbMiddleware(BaseMiddleware):

@@ -9,7 +9,7 @@ from bot.config import settings
 from bot.db.pool import create_pool, close_pool
 from bot.db.fsm_storage import PgFSMStorage
 from bot.middlewares import DbMiddleware, FSMResetMiddleware, register_valid_states
-from bot.handlers import start, menu, team_create, team_join, team_info, team_leave, foncode, stub
+from bot.handlers import start, menu, team_info, stub
 
 
 async def main() -> None:
@@ -33,11 +33,7 @@ async def main() -> None:
     dp.include_routers(
         start.router,
         menu.router,
-        foncode.router,
-        team_create.router,
-        team_join.router,
         team_info.router,
-        team_leave.router,
         stub.router,
     )
 
