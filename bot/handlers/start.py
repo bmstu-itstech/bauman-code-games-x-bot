@@ -10,7 +10,6 @@ from bot.db import participants as db_part
 from bot.db import teams as db_teams
 from bot.db import ref_sources as db_ref
 from bot.handlers.menu import show_menu
-from bot.handlers.registration import start_registration
 from bot.templates import render
 from bot.validators import validate_team_id
 
@@ -31,11 +30,7 @@ async def cmd_start_deep(
     team_id, ref_code = await _parse_deep_link(conn, arg)
 
     if participant is None:
-        if ref_code:
-            await state.update_data(pending_ref_code=ref_code)
-        if team_id:
-            await state.update_data(pending_team_id=team_id)
-        await start_registration(message, state)
+        await message.answer(render("registration_closed"), parse_mode="HTML")
         return
 
     if team_id is None:
@@ -90,6 +85,6 @@ async def _parse_deep_link(
 async def cmd_start(message: Message, state: FSMContext, conn: asyncpg.Connection) -> None:
     participant = await db_part.get_participant(conn, message.from_user.id)  # type: ignore[union-attr]
     if participant is None:
-        await start_registration(message, state)
+        await message.answer(render("registration_closed"), parse_mode="HTML")
     else:
         await show_menu(message, conn)
